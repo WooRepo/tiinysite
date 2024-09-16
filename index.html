@@ -30,42 +30,4 @@
 
     <script>
         // Replace with your GitHub repository details
-        const repoUrl = 'https://api.github.com/repos/WooRepo/tiinysite/contents/';
-
-        async function fetchFileList() {
-            try {
-                const response = await fetch(repoUrl);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                const fileList = document.getElementById('file-list');
-
-                for (const file of data) {
-                    if (file.type === 'file') {
-                        // Fetch the file content to get the URL inside
-                        const fileResponse = await fetch(file.download_url);
-                        const url = await fileResponse.text();
-
-                        // Create a list item and a link
-                        const listItem = document.createElement('li');
-                        const fileLink = document.createElement('a');
-
-                        // Set the link to the URL contained in the file
-                        fileLink.href = url.trim();
-                        fileLink.textContent = file.name;
-                        fileLink.target = '_blank'; // Open links in a new tab
-
-                        listItem.appendChild(fileLink);
-                        fileList.appendChild(listItem);
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching file list:', error);
-            }
-        }
-
-        window.onload = fetchFileList;
-    </script>
-</body>
-</html>
+        let cu
