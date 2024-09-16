@@ -39,4 +39,58 @@
                 }
                 const data = await response.json();
                 const fileList = document.getElementById('file-list');
-               
+                fileList.innerHTML = ''; // Clear previous list
+
+                if (path) {
+                    // Add a link to go back to the parent directory
+                    const backLink = document.createElement('a');
+                    backLink.href = '#';
+                    backLink.textContent = 'Back';
+                    backLink.onclick = () => {
+                        fetchFileList(currentPath.split('/').slice(0, -1).join('/'));
+                        return false;
+                    };
+                    const backListItem = document.createElement('li');
+                    backListItem.appendChild(backLink);
+                    fileList.appendChild(backListItem);
+                }
+
+                data.forEach(item => {
+                    const listItem = document.createElement('li');
+                    const link = document.createElement('a');
+
+                    if (item.type === 'file') {
+                        link.href = '#';
+                        link.textContent = item.name;
+                        link.onclick = async (event) => {
+                            event.preventDefault();
+                            try {
+                                const fileResponse = await fetch(item.download_url);
+                                const url = await fileResponse.text();
+                                window.open(url.trim(), '_blank');
+                            } catch (error) {
+                                console.error('Error fetching file content:', error);
+                            }
+                        };
+                    } else if (item.type === 'dir') {
+                        link.href = '#';
+                        link.textContent = item.name;
+                        link.onclick = (event) => {
+                            event.preventDefault();
+                            currentPath = (currentPath ? currentPath + '/' : '') + item.name;
+                            fetchFileList(currentPath);
+                        };
+                    }
+
+                    listItem.appendChild(link);
+                    fileList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Error fetching file list:', error);
+            }
+        }
+
+        window.onload = () => fetchFileList();
+    </script>
+</body>
+</html>
