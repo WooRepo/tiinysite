@@ -41,33 +41,25 @@
                 const data = await response.json();
                 const fileList = document.getElementById('file-list');
 
-                data.forEach(file => {
+                for (const file of data) {
                     if (file.type === 'file') {
+                        // Fetch the file content to get the URL inside
+                        const fileResponse = await fetch(file.download_url);
+                        const url = await fileResponse.text();
+
+                        // Create a list item and a link
                         const listItem = document.createElement('li');
                         const fileLink = document.createElement('a');
-                        
-                        fileLink.href = file.download_url;
+
+                        // Set the link to the URL contained in the file
+                        fileLink.href = url.trim();
                         fileLink.textContent = file.name;
                         fileLink.target = '_blank'; // Open links in a new tab
-
-                        // Set the link to open the file content directly
-                        fileLink.onclick = (event) => {
-                            event.preventDefault(); // Prevent default link behavior
-                            fetch(file.download_url)
-                                .then(response => response.text())
-                                .then(text => {
-                                    const newWindow = window.open();
-                                    newWindow.document.open();
-                                    newWindow.document.write('<pre>' + text + '</pre>');
-                                    newWindow.document.close();
-                                })
-                                .catch(error => console.error('Error loading file content:', error));
-                        };
 
                         listItem.appendChild(fileLink);
                         fileList.appendChild(listItem);
                     }
-                });
+                }
             } catch (error) {
                 console.error('Error fetching file list:', error);
             }
