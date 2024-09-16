@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FreeViewer</title> <!-- This changes the title of the browser tab -->
+    <title>FreeViewer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,12 +15,49 @@
         .file-list li {
             margin: 10px 0;
         }
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <h1>FreeViewer</h1> <!-- This changes the heading at the top of the page -->
+    <h1>FreeViewer</h1>
     <ul id="file-list" class="file-list"></ul>
 
-    <script src="script.js"></script>
+    <script>
+        // Replace with your GitHub repository details
+        const repoUrl = 'https://api.github.com/repos/WooRepo/tiinysite/contents/';
+
+        async function fetchFileList() {
+            try {
+                const response = await fetch(repoUrl);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                const fileList = document.getElementById('file-list');
+
+                data.forEach(file => {
+                    if (file.type === 'file') {
+                        const listItem = document.createElement('li');
+                        const fileLink = document.createElement('a');
+                        fileLink.href = file.download_url;
+                        fileLink.textContent = file.name;
+                        fileLink.target = '_blank'; // Open links in a new tab
+                        listItem.appendChild(fileLink);
+                        fileList.appendChild(listItem);
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching file list:', error);
+            }
+        }
+
+        window.onload = fetchFileList;
+    </script>
 </body>
 </html>
