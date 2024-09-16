@@ -45,19 +45,14 @@
                     if (file.type === 'file') {
                         const listItem = document.createElement('li');
                         const fileLink = document.createElement('a');
+                        
+                        // Use download_url if available
                         fileLink.href = file.download_url;
                         fileLink.textContent = file.name;
                         fileLink.target = '_blank'; // Open links in a new tab
-                        listItem.appendChild(fileLink);
-                        fileList.appendChild(listItem);
-                    }
-                });
-            } catch (error) {
-                console.error('Error fetching file list:', error);
-            }
-        }
 
-        window.onload = fetchFileList;
-    </script>
-</body>
-</html>
+                        // Check the file extension or type to handle appropriately
+                        const fileExtension = file.name.split('.').pop().toLowerCase();
+                        if (fileExtension === 'mp4' || fileExtension === 'mov' || fileExtension === 'avi') {
+                            // Assume it's a video file
+                            fileLink.href = 
